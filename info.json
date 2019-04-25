@@ -1,6 +1,7 @@
 {
     "builder": "igor",
     "name": "s3fd",
+    "family": "detection",
     "parent": null,
     "framework": "PyTorch",
     "dataset": "WIDER FACE",
