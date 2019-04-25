@@ -7,12 +7,14 @@
     "isTrainable": false,
     "isPrivate": false,
     "blueprint": [
+        "__init__.py",
         "layers.py",
         "model.py",
         "rocket_builder.py",
         "utils.py",
         "weights.pth",
-        "config.json"
+        "config.json",
+        "info.json"
     ],
     "internalUrl": "https://gitlab.com/mirage-technologies/rockets/s3fd",
     "githubUrl": "https://github.com/yxlijun/S3FD.pytorch",
