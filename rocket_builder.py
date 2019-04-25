@@ -2,23 +2,30 @@ import os
 from .model import s3fd
 from .utils import *
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
 import types
 from PIL import Image, ImageDraw
+import json
 
-def build():
+def build(config_path: str = '') -> nn.Module:
+    # Load Config file
+    if not config_path: # If no config path then load default one
+        config_path = os.path.join(os.path.realpath(os.path.dirname(__file__)), "config.json")
+
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+
     model = s3fd()
-    model.load_state_dict(torch.load(os.path.join(os.path.realpath(os.path.dirname(__file__)),
-                                                  "weights.pth")),
-                          strict=True)
+    model.load_state_dict(torch.load(os.path.join(os.path.realpath(os.path.dirname(__file__)), config['weights_path'])), strict=True)
 
     model.postprocess = types.MethodType(postprocess, model)
     model.preprocess = types.MethodType(preprocess, model)
 
     return model
 
-def preprocess(self, x):
+def preprocess(self, x: Image)-> torch.Tensor:
     """Converts PIL Image or Array into pytorch tensor specific to this model
 
     Handles all the necessary steps for preprocessing such as resizing, normalization.
