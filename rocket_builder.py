@@ -1,12 +1,42 @@
 import os
-from .architecture import s3fd
-from .bbox import *
+from .model import s3fd
+from .utils import *
 import torch
 import torch.nn.functional as F
 from torchvision import transforms
 import types
 from PIL import Image, ImageDraw
 
+def build():
+    model = s3fd()
+    model.load_state_dict(torch.load(os.path.join(os.path.realpath(os.path.dirname(__file__)),
+                                                  "weights.pth")),
+                          strict=True)
+
+    model.postprocess = types.MethodType(postprocess, model)
+    model.preprocess = types.MethodType(preprocess, model)
+
+    return model
+
+def preprocess(self, x):
+    """Converts PIL Image or Array into pytorch tensor specific to this model
+
+    Handles all the necessary steps for preprocessing such as resizing, normalization.
+    Works with both single images and list/batch of images. Input image file is expected
+    to be a `PIL.Image` object with 3 color channels.
+
+    Args:
+        x (list or PIL.Image): input image or list of images.
+    """
+    x = x.convert("RGB")
+    x = np.array(x)
+    x = x - np.array([104, 117, 123])
+    x = x.transpose(2, 0, 1)
+    x = x.reshape((1,) + x.shape)
+
+    x = torch.from_numpy(x).float()
+
+    return x
 
 def postprocess(self, x: torch.Tensor, input_img: Image, visualize: bool = False):
     """Converts pytorch tensor into PIL Image
@@ -17,7 +47,7 @@ def postprocess(self, x: torch.Tensor, input_img: Image, visualize: bool = False
     Args:
         x (Tensor): Output Tensor to postprocess
     """
-    olist = x
+    olist = x.copy()
     bboxlist = []
 
     for i in range(int(len(olist) / 2)): olist[i * 2] = F.softmax(olist[i * 2], dim=1)
@@ -75,35 +105,4 @@ def postprocess(self, x: torch.Tensor, input_img: Image, visualize: bool = False
     return list_detections
 
 
-def preprocess(self, x):
-    """Converts PIL Image or Array into pytorch tensor specific to this model
-
-    Handles all the necessary steps for preprocessing such as resizing, normalization.
-    Works with both single images and list/batch of images. Input image file is expected
-    to be a `PIL.Image` object with 3 color channels.
-
-    Args:
-        x (list or PIL.Image): input image or list of images.
-    """
-    x = x.convert("RGB")
-    x = np.array(x)
-    x = x - np.array([104, 117, 123])
-    x = x.transpose(2, 0, 1)
-    x = x.reshape((1,) + x.shape)
-
-    x = torch.from_numpy(x).float()
-
-    return x
-
-
-def build():
-    model = s3fd()
-    model.load_state_dict(torch.load(os.path.join(os.path.realpath(os.path.dirname(__file__)),
-                                                  "weights.pth")),
-                          strict=True)
-
-    model.postprocess = types.MethodType(postprocess, model)
-    model.preprocess = types.MethodType(preprocess, model)
-
-    return model
 
