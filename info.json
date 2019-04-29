@@ -1,0 +1,33 @@
+{
+    "builder": "igor",
+    "name": "s3fd",
+    "family": "detection",
+    "parent": null,
+    "framework": "PyTorch",
+    "dataset": "WIDER FACE",
+    "isTrainable": false,
+    "isPrivate": false,
+    "blueprint": [
+        "__init__.py",
+        "layers.py",
+        "model.py",
+        "rocket_builder.py",
+        "utils.py",
+        "weights.pth",
+        "config.json",
+        "info.json"
+    ],
+    "internalUrl": "https://gitlab.com/mirage-technologies/rockets/s3fd",
+    "githubUrl": "https://github.com/yxlijun/S3FD.pytorch",
+    "paper":{
+        "author": ["Shifeng Zhang", "Xiangyu Zhu", "Zhen Lei", "Hailin Shi", "Xiaobo Wang", "Stan Z. Li"],
+        "title": "S³FD: Single Shot Scale-invariant Face Detector",
+        "journal": "CoRR",
+        "volume": "abs/1708.05237",
+        "year": "2017",
+        "url": "http://arxiv.org/abs/1708.05237",
+        "archivePrefix": "arXiv",
+        "eprint": "1708.05237",
+        "timestamp": "Mon, 13 Aug 2018 16:46:21 +0200"
+    }
+}
